@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop with Animation</title>
+  <style>
+    .draggable {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.1s ease; /* Додаємо анімацію */
+    }
+    #square { width: 100px; height: 100px; background-color: rgba(255, 0, 0, 0.7); }
+    #circle { width: 100px; height: 100px; background-color: rgba(0, 255, 0, 0.7); border-radius: 50%; }
+    #rectangle { width: 150px; height: 80px; background-color: rgba(0, 0, 255, 0.7); }
+  </style>
+</head>
+<body>
+
+  <div id="square" class="draggable" style="top: 50px; left: 50px;"></div>
+  <div id="circle" class="draggable" style="top: 50px; left: 200px;"></div>
+  <div id="rectangle" class="draggable" style="top: 50px; left: 400px;"></div>
+
+  <script>
+    let activeElement = null;
+    let offsetX, offsetY;
+
+    document.querySelectorAll('.draggable').forEach(element => {
+      element.addEventListener('mousedown', (event) => {
+        activeElement = element;
+        offsetX = event.clientX - element.getBoundingClientRect().left;
+        offsetY = event.clientY - element.getBoundingClientRect().top;
+
+        document.addEventListener('mousemove', moveElement);
+        document.addEventListener('mouseup', stopMoving);
+      });
+    });
+
+    function moveElement(event) {
+      if (activeElement) {
+        let left = event.clientX - offsetX;
+        let top = event.clientY - offsetY;
+
+        activeElement.style.left = left + 'px';
+        activeElement.style.top = top + 'px';
+      }
+    }
+
+    function stopMoving() {
+      activeElement = null;
+      document.removeEventListener('mousemove', moveElement);
+      document.removeEventListener('mouseup', stopMoving);
+    }
+  </script>
+
+</body>
+</html>
