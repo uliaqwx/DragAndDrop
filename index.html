@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,65 +10,61 @@
             height: 100px;
             position: absolute;
             cursor: pointer;
+            opacity: 0.7;
         }
-        #object1 {
-            background-color: red;
-            top: 50px;
-            left: 50px;
+        #obj1 {
+            background-color: rgba(255, 0, 0, 0.7); /* Напівпрозорий червоний */
         }
-        #object2 {
-            background-color: blue;
-            top: 200px;
-            left: 50px;
+        #obj2 {
+            background-color: rgba(0, 255, 0, 0.7); /* Напівпрозорий зелений */
         }
-        #object3 {
-            background-color: green;
-            top: 350px;
-            left: 50px;
+        #obj3 {
+            background-color: rgba(0, 0, 255, 0.7); /* Напівпрозорий синій */
         }
     </style>
 </head>
 <body>
-    <div id="object1" class="draggable"></div>
-    <div id="object2" class="draggable"></div>
-    <div id="object3" class="draggable"></div>
+
+    <div id="obj1" class="draggable" draggable="true" style="top: 50px; left: 50px;"></div>
+    <div id="obj2" class="draggable" draggable="true" style="top: 50px; left: 200px;"></div>
+    <div id="obj3" class="draggable" draggable="true" style="top: 50px; left: 350px;"></div>
 
     <script>
-        // Function to make an element draggable
-        function makeDraggable(element) {
-            let offsetX = 0;
-            let offsetY = 0;
-            let isDragging = false;
+        // Функції для drag and drop
+        let draggedElement = null;
 
-            element.onmousedown = function(e) {
-                e.preventDefault();
-                isDragging = true;
-                offsetX = e.clientX - element.getBoundingClientRect().left;
-                offsetY = e.clientY - element.getBoundingClientRect().top;
+        // При натисканні на об'єкт
+        document.querySelectorAll('.draggable').forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                draggedElement = e.target;
+                e.dataTransfer.setData("text", draggedElement.id);
+            });
 
-                document.onmousemove = function(e) {
-                    if (isDragging) {
-                        let newX = e.clientX - offsetX;
-                        let newY = e.clientY - offsetY;
+            item.addEventListener('dragend', () => {
+                draggedElement = null;
+            });
+        });
 
-                        // Move the element
-                        element.style.left = newX + 'px';
-                        element.style.top = newY + 'px';
-                    }
-                };
+        // Дозволити перетягувати елементи
+        document.body.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
 
-                document.onmouseup = function() {
-                    isDragging = false;
-                    document.onmousemove = null;
-                    document.onmouseup = null;
-                };
-            };
-        }
+        document.body.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dropTarget = e.target;
 
-        // Make all three objects draggable
-        makeDraggable(document.getElementById('object1'));
-        makeDraggable(document.getElementById('object2'));
-        makeDraggable(document.getElementById('object3'));
+            // Перевірка, чи це не сам об'єкт
+            if (dropTarget.classList.contains('draggable')) {
+                const data = e.dataTransfer.getData("text");
+                const draggedObj = document.getElementById(data);
+
+                // Переміщення елемента на нове місце
+                draggedObj.style.left = `${e.pageX - draggedObj.offsetWidth / 2}px`;
+                draggedObj.style.top = `${e.pageY - draggedObj.offsetHeight / 2}px`;
+            }
+        });
     </script>
+
 </body>
 </html>
