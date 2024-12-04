@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop</title>
+  <style>
+    /* Стилізація для всіх перетягуваних елементів */
+    .draggable {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Стиль для квадратного елемента */
+    #square {
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255, 0, 0, 0.7); /* Червоний, напівпрозорий */
+    }
+
+    /* Стиль для круглого елемента */
+    #circle {
+      width: 100px;
+      height: 100px;
+      background-color: rgba(0, 255, 0, 0.7); /* Зелений, напівпрозорий */
+      border-radius: 50%; /* Округлі краї */
+    }
+
+    /* Стиль для прямокутного елемента */
+    #rectangle {
+      width: 150px;
+      height: 80px;
+      background-color: rgba(0, 0, 255, 0.7); /* Синій, напівпрозорий */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Три об'єкти, які можна перетягувати -->
+  <div id="square" class="draggable" style="top: 50px; left: 50px;"></div>
+  <div id="circle" class="draggable" style="top: 50px; left: 200px;"></div>
+  <div id="rectangle" class="draggable" style="top: 50px; left: 400px;"></div>
+
+  <script>
+    // Змінні для збереження елементів, що перетягуються, та їх початкових координат
+    let activeElement = null;
+    let offsetX, offsetY;
+
+    // Отримуємо всі елементи з класом .draggable
+    document.querySelectorAll('.draggable').forEach(element => {
+      // Додаємо обробник події mouse down для початку перетягування
+      element.addEventListener('mousedown', (event) => {
+        activeElement = element;
+        // Обчислюємо відстань між місцем кліку та лівим верхнім кутом елемента
+        offsetX = event.clientX - element.getBoundingClientRect().left;
+        offsetY = event.clientY - element.getBoundingClientRect().top;
+
+        // Додаємо слухачів для подій mousemove та mouseup
+        document.addEventListener('mousemove', moveElement);
+        document.addEventListener('mouseup', stopMoving);
+      });
+    });
+
+    // Функція для переміщення елемента
+    function moveElement(event) {
+      if (activeElement) {
+        // Оновлюємо позицію елемента в залежності від поточного положення миші
+        activeElement.style.left = (event.clientX - offsetX) + 'px';
+        activeElement.style.top = (event.clientY - offsetY) + 'px';
+      }
+    }
+
+    // Функція для завершення перетягування
+    function stopMoving() {
+      activeElement = null;
+      document.removeEventListener('mousemove', moveElement);
+      document.removeEventListener('mouseup', stopMoving);
+    }
+  </script>
+
+</body>
+</html>
