@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop</title>
+    <style>
+        .draggable {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            cursor: pointer;
+        }
+        #object1 {
+            background-color: red;
+            top: 50px;
+            left: 50px;
+        }
+        #object2 {
+            background-color: blue;
+            top: 200px;
+            left: 50px;
+        }
+        #object3 {
+            background-color: green;
+            top: 350px;
+            left: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="object1" class="draggable"></div>
+    <div id="object2" class="draggable"></div>
+    <div id="object3" class="draggable"></div>
+
+    <script>
+        // Function to make an element draggable
+        function makeDraggable(element) {
+            let offsetX = 0;
+            let offsetY = 0;
+            let isDragging = false;
+
+            element.onmousedown = function(e) {
+                e.preventDefault();
+                isDragging = true;
+                offsetX = e.clientX - element.getBoundingClientRect().left;
+                offsetY = e.clientY - element.getBoundingClientRect().top;
+
+                document.onmousemove = function(e) {
+                    if (isDragging) {
+                        let newX = e.clientX - offsetX;
+                        let newY = e.clientY - offsetY;
+
+                        // Move the element
+                        element.style.left = newX + 'px';
+                        element.style.top = newY + 'px';
+                    }
+                };
+
+                document.onmouseup = function() {
+                    isDragging = false;
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+                };
+            };
+        }
+
+        // Make all three objects draggable
+        makeDraggable(document.getElementById('object1'));
+        makeDraggable(document.getElementById('object2'));
+        makeDraggable(document.getElementById('object3'));
+    </script>
+</body>
+</html>
