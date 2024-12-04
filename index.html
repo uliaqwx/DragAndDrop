@@ -1,70 +1,67 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag and Drop</title>
-    <style>
-        .draggable {
-            width: 100px;
-            height: 100px;
-            position: absolute;
-            cursor: pointer;
-            opacity: 0.7;
-        }
-        #obj1 {
-            background-color: rgba(255, 0, 0, 0.7); /* Напівпрозорий червоний */
-        }
-        #obj2 {
-            background-color: rgba(0, 255, 0, 0.7); /* Напівпрозорий зелений */
-        }
-        #obj3 {
-            background-color: rgba(0, 0, 255, 0.7); /* Напівпрозорий синій */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop</title>
+  <style>
+    .draggable {
+      position: absolute;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+    #circle {
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255, 0, 0, 0.5); /* Red, semi-transparent */
+      border-radius: 50%;
+    }
+    #square {
+      width: 100px;
+      height: 100px;
+      background-color: rgba(0, 255, 0, 0.5); /* Green, semi-transparent */
+    }
+    #triangle {
+      width: 0;
+      height: 0;
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-bottom: 100px solid rgba(0, 0, 255, 0.5); /* Blue, semi-transparent */
+    }
+  </style>
 </head>
 <body>
 
-    <div id="obj1" class="draggable" draggable="true" style="top: 50px; left: 50px;"></div>
-    <div id="obj2" class="draggable" draggable="true" style="top: 50px; left: 200px;"></div>
-    <div id="obj3" class="draggable" draggable="true" style="top: 50px; left: 350px;"></div>
+  <div id="circle" class="draggable" style="left: 50px; top: 50px;"></div>
+  <div id="square" class="draggable" style="left: 200px; top: 50px;"></div>
+  <div id="triangle" class="draggable" style="left: 400px; top: 50px;"></div>
 
-    <script>
-        // Функції для drag and drop
-        let draggedElement = null;
+  <script>
+    const objects = document.querySelectorAll('.draggable');
+    let activeElement = null;
+    let offsetX, offsetY;
 
-        // При натисканні на об'єкт
-        document.querySelectorAll('.draggable').forEach(item => {
-            item.addEventListener('dragstart', (e) => {
-                draggedElement = e.target;
-                e.dataTransfer.setData("text", draggedElement.id);
-            });
-
-            item.addEventListener('dragend', () => {
-                draggedElement = null;
-            });
+    objects.forEach(obj => {
+      obj.addEventListener('mousedown', (e) => {
+        activeElement = obj;
+        offsetX = e.clientX - obj.getBoundingClientRect().left;
+        offsetY = e.clientY - obj.getBoundingClientRect().top;
+        
+        document.addEventListener('mousemove', moveElement);
+        document.addEventListener('mouseup', () => {
+          activeElement = null;
+          document.removeEventListener('mousemove', moveElement);
         });
+      });
+    });
 
-        // Дозволити перетягувати елементи
-        document.body.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-
-        document.body.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const dropTarget = e.target;
-
-            // Перевірка, чи це не сам об'єкт
-            if (dropTarget.classList.contains('draggable')) {
-                const data = e.dataTransfer.getData("text");
-                const draggedObj = document.getElementById(data);
-
-                // Переміщення елемента на нове місце
-                draggedObj.style.left = `${e.pageX - draggedObj.offsetWidth / 2}px`;
-                draggedObj.style.top = `${e.pageY - draggedObj.offsetHeight / 2}px`;
-            }
-        });
-    </script>
+    function moveElement(e) {
+      if (activeElement) {
+        activeElement.style.left = (e.clientX - offsetX) + 'px';
+        activeElement.style.top = (e.clientY - offsetY) + 'px';
+      }
+    }
+  </script>
 
 </body>
 </html>
